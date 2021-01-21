@@ -1,14 +1,24 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
+
 const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server:server });
 
-var Routes = require('./router');
-
-// Import my test routes into the path '/test'
+const Routes = require('./router');
 app.use(Routes);
 
-const wss = new WebSocket.Server({ server:server });
+const mysql = require('mysql');
+const con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: ""
+});
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected to database");
+});
+
 
 let id = 0;
 let clients = {};
