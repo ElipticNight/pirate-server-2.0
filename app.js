@@ -8,18 +8,6 @@ const wss = new WebSocket.Server({ server:server });
 const Routes = require('./router');
 app.use(Routes);
 
-// const mysql = require('mysql');
-// const con = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: ""
-// });
-// con.connect(function(err) {
-//   if (err) throw err;
-//   console.log("Connected to database");
-// });
-
-
 let id = 0;
 let clients = {};
 
