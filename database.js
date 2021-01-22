@@ -14,15 +14,15 @@ class Database
 		});
 	}
 
-	createRoom() {
+	createRoom(roomSettings) {
 		let sql = `INSERT INTO rooms (id, client_no, setting_one, setting_two, setting_three, setting_four) VALUES (?, ?, ?, ?, ?, ?)`;
 		let params = [
-			'test',
-			0,
-			true,
-			false,
-			true,
-			false
+			roomSettings.roomID,
+			roomSettings.clientNo,
+			roomSettings.one,
+			roomSettings.two,
+			roomSettings.three,
+			roomSettings.four
 		]
 		this.con.query(sql, params, function (err, result) {
 			if (err) throw err;
