@@ -8,16 +8,16 @@ const wss = new WebSocket.Server({ server:server });
 const Routes = require('./router');
 app.use(Routes);
 
-const mysql = require('mysql');
-const con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: ""
-});
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected to database");
-});
+// const mysql = require('mysql');
+// const con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: ""
+// });
+// con.connect(function(err) {
+//   if (err) throw err;
+//   console.log("Connected to database");
+// });
 
 
 let id = 0;
@@ -30,14 +30,18 @@ wss.on('connection', function connection(ws) {
 	console.log('new client connected');
 	ws.send('client successfully connected');
 
-	ws.on('message', function incoming(message) {
-		console.log('received: %s', message);
-		ws.send('recieved message ' + message);
+	ws.on('message', function incoming(msg) {
+		console.log('received: %s', msg);
+		let message = JSON.parse(msg);
+		if (message.target === 'joinroom') {
+			ws.send(message.name);
+			ws.send(message.roomid);
+		}
 	});
 
 	ws.on('close', function close() {
 		console.log('connection closed');
-		ws.id = id--;
+		id--;
 	});
 
 	console.log(id);
