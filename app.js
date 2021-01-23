@@ -8,6 +8,8 @@ const wss = new WebSocket.Server({ server:server });
 const Routes = require('./router');
 app.use(Routes);
 
+const Channel = require('./channel');
+
 let id = 0;
 let clients = {};
 
@@ -22,6 +24,7 @@ wss.on('connection', function connection(ws) {
 		console.log('received: %s', msg);
 		let message = JSON.parse(msg);
 		if (message.target === 'joinroom') {
+			new Channel(message.roomid);
 			ws.send(message.name);
 			ws.send(message.roomid);
 		}

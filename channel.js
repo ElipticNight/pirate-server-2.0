@@ -2,11 +2,14 @@ const Database = require('./database');
 
 class Channel
 {
-	constructor() {
-		//
+	constructor (roomID) {
+		console.log('roomID:  ', roomID);
+		let DB = new Database();
+		let test = DB.getRoomSettings(roomID);
+		console.log('returned: ', test);
 	}
 
-	static createRoom(body) {
+	static createRoom (body) {
 		let DB = new Database();
 		let roomID;
 		while (true) {

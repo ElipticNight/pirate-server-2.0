@@ -39,6 +39,18 @@ class Database
 			console.log(result.length !== 0);
 		});
 	}
+
+	getRoomSettings(roomID) {
+		let sql = "SELECT * FROM rooms WHERE id = ?"
+		let params = [
+			roomID
+		]
+		this.con.query(sql, params, function (err, result) {
+			if (err) throw err;
+			console.log('result: ', result);
+			return (result);
+		});
+	}
 }
 
 module.exports = Database;
