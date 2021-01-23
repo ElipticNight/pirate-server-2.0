@@ -15,7 +15,7 @@ class Database
 	}
 
 	createRoom(roomSettings) {
-		let sql = `INSERT INTO rooms (id, client_no, setting_one, setting_two, setting_three, setting_four) VALUES (?, ?, ?, ?, ?, ?)`;
+		let sql = "INSERT INTO rooms (id, client_no, setting_one, setting_two, setting_three, setting_four) VALUES (?, ?, ?, ?, ?, ?)";
 		let params = [
 			roomSettings.roomID,
 			roomSettings.clientNo,
@@ -26,7 +26,17 @@ class Database
 		]
 		this.con.query(sql, params, function (err, result) {
 			if (err) throw err;
-			console.log("1 record inserted");
+		});
+	}
+
+	roomExists(roomID) {
+		let sql = "SELECT * FROM rooms WHERE id = ?"
+		let params = [
+			roomID
+		]
+		this.con.query(sql, params, function (err, result) {
+			if (err) throw err;
+			console.log(result.length !== 0);
 		});
 	}
 }

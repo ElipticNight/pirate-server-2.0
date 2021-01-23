@@ -7,10 +7,19 @@ class Channel
 	}
 
 	static createRoom(body) {
-		let roomID = Math.floor(Math.random() * (16777215 - 1048576) + 1048576).toString(16).toUpperCase()
+		let DB = new Database();
+		let roomID;
+		while (true) {
+			roomID = Math.floor(Math.random() * (16777215 - 1048576) + 1048576).toString(16).toUpperCase();
+			if (DB.roomExists(roomID)) {
+				continue
+			} else {
+				break
+			}
+		}
 		body.roomID = roomID;
 		body.clientNo = 0;
-		new Database().createRoom(body);
+		DB.createRoom(body);
 		return (roomID);
 	}
 }
