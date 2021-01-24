@@ -39,10 +39,15 @@ class Database
 	}
 
 	async getRoomSettings(roomID) {
-		let params = [
-			roomID
-		]
-		return await this.query('SELECT * FROM rooms WHERE id = ?', params);
+		return await this.query('SELECT * FROM rooms WHERE id = ?', roomID);
+	}
+
+	async addClientToRoom(roomID) {
+		return await this.query('UPDATE rooms SET client_no=client_no+1 WHERE id = ?', roomID);
+	}
+
+	async removeClientFromRoom(roomID) {
+		return await this.query('UPDATE rooms SET client_no=client_no-1 WHERE id = ?', roomID);
 	}
 }
 

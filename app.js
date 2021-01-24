@@ -24,21 +24,30 @@ wss.on('connection', function connection(ws) {
 		message = JSON.parse(msg);
 		(async() => {
 			if (message.target === 'joinroom') {
-				let channel = new Channel();
-				await channel.construct(message.roomid);
+				let room = await createRoom(message.roomid)
+				await room.addNewClient();
+
 				ws.send(message.name);
 				ws.send(message.roomid);
 			}
 		})();
-
 	});
 
 	ws.on('close', function close() {
-		console.log('connection closed');
-		id--;
+		(async() => {
+			let room = await createRoom(message.roomid)
+			console.log('connection closed');
+			await room.RemoveClient();
+			id--;
+		})();
 	});
 
 	console.log('number of clients: ', id);
 });
 
+async function createRoom(roomID) {
+	let channel = new Channel();
+	await channel.construct(roomID);
+	return channel;
+}
 server.listen(3000, () => console.log('listening on port 3000'));
