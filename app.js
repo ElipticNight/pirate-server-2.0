@@ -1,14 +1,14 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
+
 const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server:server });
 
-var Routes = require('./router');
-
-// Import my test routes into the path '/test'
+const Routes = require('./router');
 app.use(Routes);
 
-const wss = new WebSocket.Server({ server:server });
+const Channel = require('./channel');
 
 let id = 0;
 let clients = {};
@@ -20,27 +20,34 @@ wss.on('connection', function connection(ws) {
 	console.log('new client connected');
 	ws.send('client successfully connected');
 
-	ws.on('message', function incoming(message) {
-		console.log('received: %s', message);
-		ws.send('recieved message ' + message);
+	ws.on('message', function incoming(msg) {
+		message = JSON.parse(msg);
+		(async() => {
+			if (message.target === 'joinroom') {
+				let room = await createRoom(message.roomid)
+				await room.addNewClient();
+
+				ws.send(message.name);
+				ws.send(message.roomid);
+			}
+		})();
 	});
 
 	ws.on('close', function close() {
-		console.log('connection closed');
-		ws.id = id--;
+		(async() => {
+			let room = await createRoom(message.roomid)
+			console.log('connection closed');
+			await room.RemoveClient();
+			id--;
+		})();
 	});
 
-	console.log(id);
+	console.log('number of clients: ', id);
 });
 
+async function createRoom(roomID) {
+	let channel = new Channel();
+	await channel.construct(roomID);
+	return channel;
+}
 server.listen(3000, () => console.log('listening on port 3000'));
-
-
-//axios to create room (post request)
-//generates a roomid and checks to see if it exists
-//sends id back to client
-
-//connect to ws
-//client is added to "waiting" room
-//request to join a room
-//server updates client's room to the channelid

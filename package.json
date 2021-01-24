@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/ElipticNight/pirate-server-2.0#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "mysql": "^2.18.1",
     "ws": "^7.4.2"
   }
 }
