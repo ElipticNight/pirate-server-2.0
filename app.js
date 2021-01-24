@@ -21,13 +21,16 @@ wss.on('connection', function connection(ws) {
 	ws.send('client successfully connected');
 
 	ws.on('message', function incoming(msg) {
-		console.log('received: %s', msg);
-		let message = JSON.parse(msg);
-		if (message.target === 'joinroom') {
-			new Channel(message.roomid);
-			ws.send(message.name);
-			ws.send(message.roomid);
-		}
+		message = JSON.parse(msg);
+		(async() => {
+			if (message.target === 'joinroom') {
+				let channel = new Channel();
+				await channel.construct(message.roomid);
+				ws.send(message.name);
+				ws.send(message.roomid);
+			}
+		})();
+
 	});
 
 	ws.on('close', function close() {
@@ -35,17 +38,7 @@ wss.on('connection', function connection(ws) {
 		id--;
 	});
 
-	console.log(id);
+	console.log('number of clients: ', id);
 });
 
 server.listen(3000, () => console.log('listening on port 3000'));
-
-
-//axios to create room (post request)
-//generates a roomid and checks to see if it exists
-//sends id back to client
-
-//connect to ws
-//client is added to "waiting" room
-//request to join a room
-//server updates client's room to the channelid

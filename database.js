@@ -1,7 +1,11 @@
 class Database
 {
+	con = null;
+	query = null;
+
 	constructor() {
 		const mysql = require('mysql');
+		const util = require('util');
 		this.con = mysql.createConnection({
 			host: "localhost",
 			user: "root",
@@ -12,6 +16,7 @@ class Database
 			if (err) throw err;
 			console.log("Connected to database");
 		});
+		this.query = util.promisify(this.con.query).bind(this.con);
 	}
 
 	createRoom(roomSettings) {
@@ -29,27 +34,15 @@ class Database
 		});
 	}
 
-	roomExists(roomID) {
-		let sql = "SELECT * FROM rooms WHERE id = ?"
-		let params = [
-			roomID
-		]
-		this.con.query(sql, params, function (err, result) {
-			if (err) throw err;
-			console.log(result.length !== 0);
-		});
+	async roomExists(roomID) {
+		return (await this.getRoomSettings(roomID)).length !== 0;
 	}
 
-	getRoomSettings(roomID) {
-		let sql = "SELECT * FROM rooms WHERE id = ?"
+	async getRoomSettings(roomID) {
 		let params = [
 			roomID
 		]
-		this.con.query(sql, params, function (err, result) {
-			if (err) throw err;
-			console.log('result: ', result);
-			return (result);
-		});
+		return await this.query('SELECT * FROM rooms WHERE id = ?', params);
 	}
 }
 

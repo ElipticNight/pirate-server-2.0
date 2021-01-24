@@ -2,19 +2,32 @@ const Database = require('./database');
 
 class Channel
 {
-	constructor (roomID) {
-		console.log('roomID:  ', roomID);
+	id = null;
+	connectedClients = null;
+	settingOne = null;
+	settingTwo = null;
+	settingThree = null;
+	settingFour = null;
+
+	async construct (roomID) {
 		let DB = new Database();
-		let test = DB.getRoomSettings(roomID);
-		console.log('returned: ', test);
+		let roomSettings = await DB.getRoomSettings(roomID);
+		this.id = roomSettings[0].id;
+		this.connectedClients = roomSettings[0].client_no;
+		this.settingOne = roomSettings[0].setting_one;
+		this.settingTwo = roomSettings[0].setting_two;
+		this.settingThree = roomSettings[0].setting_three;
+		this.settingFour = roomSettings[0].setting_four;
+		return 'constructed';
 	}
 
-	static createRoom (body) {
+
+	static async createRoom (body) {
 		let DB = new Database();
 		let roomID;
 		while (true) {
 			roomID = Math.floor(Math.random() * (16777215 - 1048576) + 1048576).toString(16).toUpperCase();
-			if (DB.roomExists(roomID)) {
+			if (await DB.roomExists(roomID)) {
 				continue
 			} else {
 				break
