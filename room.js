@@ -63,9 +63,14 @@ class Room
 		}
 	}
 
-	async clientNotReady(name) {
+	async clientNotReady(client) {
 		client.roomID = this.id;
-		return await this.DB.clientNotReady(client);
+		await this.DB.clientNotReady(client);
+		await WebsocketHandler.clientNotReady(client.name, this.id);
+	}
+
+	async startGame() {
+		//check if host sent request
 	}
 }
 
