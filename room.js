@@ -55,10 +55,9 @@ class Room
 		client.roomID = this.id;
 		await this.DB.clientReady(client);
 		let readyClientsNo = await this.DB.readyClientsNo(this.id)
-		await WebsocketHandler.broadcastToRoom(this.id);
+		await WebsocketHandler.clientReady(client.name, this.id);
 		if(readyClientsNo[0].countID === this.connectedClientsNo) {
-			console.log('all clients ready');
-			//broadcast all clients ready
+			await WebsocketHandler.clientReady(this.id);
 		} else {
 			return
 		}

@@ -93,8 +93,8 @@ class Database
 		return await this.query('SELECT count(id) as countID FROM clients WHERE room_id = ? AND status = "ready"', roomID);
 	}
 
-	async getRoomSocketIDs(roomID) {
-		return await this.query('SELECT socket_id FROM clients WHERE room_id = ?', roomID);
+	async getClientsInRoom(roomID) {
+		return await this.query('SELECT * FROM clients WHERE room_id = ?', roomID);
 	}
 }
 
