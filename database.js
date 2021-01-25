@@ -78,8 +78,6 @@ class Database
 			client.roomID,
 			client.name
 		]
-		console.log(			client.roomID,
-			client.name)
 		return await this.query('UPDATE clients SET status = "ready" WHERE room_id = ? AND name = ?', params);
 	}
 
@@ -92,7 +90,11 @@ class Database
 	}
 
 	async readyClientsNo(roomID) {
-		return await this.query('SELECT count(id) FROM clients WHERE room_id = ? AND status = "ready"', roomID);
+		return await this.query('SELECT count(id) as countID FROM clients WHERE room_id = ? AND status = "ready"', roomID);
+	}
+
+	async getRoomSocketIDs(roomID) {
+		return await this.query('SELECT socket_id FROM clients WHERE room_id = ?', roomID);
 	}
 }
 

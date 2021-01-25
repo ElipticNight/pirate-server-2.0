@@ -1,8 +1,10 @@
 const Database = require('./database');
+const WebsocketHandler = require('./websocketHandler');
 
 class Room
 {
 	DB = null;
+	WSH = null;
 	id = null;
 	connectedClientsNo = null;
 	settingOne = null;
@@ -53,8 +55,9 @@ class Room
 		client.roomID = this.id;
 		await this.DB.clientReady(client);
 		let readyClientsNo = await this.DB.readyClientsNo(this.id)
-		//broadcast client is ready
-		if(readyClientsNo === connectedClientsNo) {
+		await WebsocketHandler.broadcastToRoom(this.id);
+		if(readyClientsNo[0].countID === this.connectedClientsNo) {
+			console.log('all clients ready');
 			//broadcast all clients ready
 		} else {
 			return
