@@ -14,9 +14,13 @@ let id = 0;
 let clients = {};
 
 wss.on('connection', function connection(ws) {
-	ws.id = id++;
+	ws.id = id;
 	clients[ws.id] = ws;
-	
+	id++;
+	let client = {
+		socket_id: ws.id,
+	}
+
 	console.log('new client connected');
 	ws.send('client successfully connected');
 
@@ -25,7 +29,9 @@ wss.on('connection', function connection(ws) {
 		(async() => {
 			if (message.target === 'joinroom') {
 				let room = await createRoom(message.roomid)
-				await room.addNewClient();
+
+				client.name = message.name;
+				await room.addNewClient(client);
 
 				ws.send(message.name);
 				ws.send(message.roomid);
@@ -39,12 +45,12 @@ wss.on('connection', function connection(ws) {
 		(async() => {
 			let room = await createRoom(message.roomid)
 			console.log('connection closed');
-			await room.RemoveClient();
-			id--;
+			await room.RemoveClient(client);
+			delete clients[ws.id];
 		})();
 	});
 
-	console.log('number of clients: ', id);
+	console.log('number of clients: ', Object.keys(clients).length);
 });
 
 async function createRoom(roomID) {

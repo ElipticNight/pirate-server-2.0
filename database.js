@@ -42,6 +42,24 @@ class Database
 		return await this.query('SELECT * FROM rooms WHERE id = ?', roomID);
 	}
 
+	async createNewClient(client) {
+		let params = [
+			client.socket_id,
+			client.name,
+			client.roomID,
+			'',
+			'setup'
+		];
+		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status) VALUES (?, ?, ?, ?, ?)', params);
+	}
+
+	async deleteClient(client) {
+		let params = [
+			client.socket_id,
+		];
+		return await this.query('DELETE FROM clients WHERE socket_id = ?', params);
+	}
+
 	async addClientToRoom(roomID) {
 		return await this.query('UPDATE rooms SET client_no=client_no+1 WHERE id = ?', roomID);
 	}

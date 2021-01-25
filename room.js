@@ -38,11 +38,14 @@ class Room
 		return (roomID);
 	}
 
-	async addNewClient() {
+	async addNewClient(client) {
+		client.roomID = this.id;
+		await this.DB.createNewClient(client);
 		return await this.DB.addClientToRoom(this.id);
 	}
 
-	async RemoveClient() {
+	async RemoveClient(client) {
+		await this.DB.deleteClient(client);
 		return await this.DB.removeClientFromRoom(this.id);
 	}
 }
