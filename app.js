@@ -29,17 +29,20 @@ wss.on('connection', function connection(ws) {
 
 	ws.on('message', function incoming(msg) {
 		message = JSON.parse(msg);
+		client.name = message.name;
 		(async() => {
 			if (message.target === 'joinroom') {
 				let room = await createRoom(message.roomid)
-
-				client.name = message.name;
 				await room.addNewClient(client);
 
 				ws.send(message.name);
 				ws.send(message.roomid);
 			} else if (message.target === 'ready') {
-				ws.send('client is ready');
+				let room = await createRoom(message.roomid)
+				room.clientReady(client);
+			} else if (message.target === 'unready') {
+				let room = await createRoom(message.roomid)
+				room.clientNotReady(client);
 			}
 		})();
 	});

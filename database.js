@@ -66,11 +66,33 @@ class Database
 	}
 
 	async addClientToRoom(roomID) {
-		return await this.query('UPDATE rooms SET client_no=client_no+1 WHERE id = ?', roomID);
+		return await this.query('UPDATE rooms SET client_no = client_no+1 WHERE id = ?', roomID);
 	}
 
 	async removeClientFromRoom(roomID) {
-		return await this.query('UPDATE rooms SET client_no=client_no-1 WHERE id = ?', roomID);
+		return await this.query('UPDATE rooms SET client_no = client_no-1 WHERE id = ?', roomID);
+	}
+
+	async clientReady(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		console.log(			client.roomID,
+			client.name)
+		return await this.query('UPDATE clients SET status = "ready" WHERE room_id = ? AND name = ?', params);
+	}
+
+	async clientNotReady(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		return await this.query('UPDATE clients SET status = "setup" WHERE room_id = ? AND name = ?', params);
+	}
+
+	async readyClientsNo(roomID) {
+		return await this.query('SELECT count(id) FROM clients WHERE room_id = ? AND status = "ready"', roomID);
 	}
 }
 

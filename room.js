@@ -4,7 +4,7 @@ class Room
 {
 	DB = null;
 	id = null;
-	connectedClients = null;
+	connectedClientsNo = null;
 	settingOne = null;
 	settingTwo = null;
 	settingThree = null;
@@ -14,7 +14,7 @@ class Room
 		this.DB = new Database();
 		let roomSettings = await this.DB.getRoomSettings(roomID);
 		this.id = roomSettings[0].id;
-		this.connectedClients = roomSettings[0].client_no;
+		this.connectedClientsNo = roomSettings[0].client_no;
 		this.settingOne = roomSettings[0].setting_one;
 		this.settingTwo = roomSettings[0].setting_two;
 		this.settingThree = roomSettings[0].setting_three;
@@ -47,6 +47,23 @@ class Room
 	async RemoveClient(client) {
 		await this.DB.deleteClient(client);
 		return await this.DB.removeClientFromRoom(this.id);
+	}
+
+	async clientReady(client) {
+		client.roomID = this.id;
+		await this.DB.clientReady(client);
+		let readyClientsNo = await this.DB.readyClientsNo(this.id)
+		//broadcast client is ready
+		if(readyClientsNo === connectedClientsNo) {
+			//broadcast all clients ready
+		} else {
+			return
+		}
+	}
+
+	async clientNotReady(name) {
+		client.roomID = this.id;
+		return await this.DB.clientNotReady(client);
 	}
 }
 
