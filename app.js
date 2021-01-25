@@ -10,6 +10,9 @@ app.use(Routes);
 
 const Room = require('./room');
 
+const Database = require('./database');
+new Database().clearTables();
+
 let id = 0;
 let clients = {};
 

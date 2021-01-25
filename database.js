@@ -19,6 +19,11 @@ class Database
 		this.query = util.promisify(this.con.query).bind(this.con);
 	}
 
+	async clearTables() {
+		await this.query('TRUNCATE TABLE clients');
+		return await this.query('DELETE FROM rooms');
+	}
+
 	createRoom(roomSettings) {
 		let sql = "INSERT INTO rooms (id, client_no, setting_one, setting_two, setting_three, setting_four) VALUES (?, ?, ?, ?, ?, ?)";
 		let params = [
