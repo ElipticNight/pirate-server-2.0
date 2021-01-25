@@ -1,4 +1,4 @@
-const Channel = require('./channel');
+const Room = require('./room');
 
 const cors = require('cors');
 var express = require('express'),
@@ -8,7 +8,7 @@ var express = require('express'),
 
   router.post('/createroom', cors(), (req, res) => {
     (async() => {
-      res.send(await Channel.createRoom(req.body));
+      res.send(await Room.createRoom(req.body));
     })();
   })
 

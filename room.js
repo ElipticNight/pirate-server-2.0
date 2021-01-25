@@ -1,6 +1,6 @@
 const Database = require('./database');
 
-class Channel
+class Room
 {
 	DB = null;
 	id = null;
@@ -47,4 +47,4 @@ class Channel
 	}
 }
 
-module.exports = Channel;
+module.exports = Room;

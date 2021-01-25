@@ -8,7 +8,7 @@ const wss = new WebSocket.Server({ server:server });
 const Routes = require('./router');
 app.use(Routes);
 
-const Channel = require('./channel');
+const Room = require('./room');
 
 let id = 0;
 let clients = {};
@@ -29,6 +29,8 @@ wss.on('connection', function connection(ws) {
 
 				ws.send(message.name);
 				ws.send(message.roomid);
+			} else if (message.target === 'ready') {
+				ws.send('client is ready');
 			}
 		})();
 	});
@@ -46,8 +48,8 @@ wss.on('connection', function connection(ws) {
 });
 
 async function createRoom(roomID) {
-	let channel = new Channel();
-	await channel.construct(roomID);
-	return channel;
+	let room = new Room();
+	await room.construct(roomID);
+	return room;
 }
 server.listen(3000, () => console.log('listening on port 3000'));
