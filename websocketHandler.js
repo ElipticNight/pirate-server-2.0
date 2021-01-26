@@ -17,20 +17,30 @@ class WebsocketHandler
 		});
 	}
 
-	static async clientReady(clientID, roomID) {
+	static async newClientJoined(clientName, roomID) {
 		let msg = WebsocketHandler.baseMessage;
-		msg.type = "ready";
-		msg.client = clientID;
+		msg.type = "client joined";
+		msg.clientName = clientName;
 
 		let message = JSON.stringify(msg);
 
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
-	static async clientNotReady(clientID, roomID) {
+	static async clientReady(clientName, roomID) {
 		let msg = WebsocketHandler.baseMessage;
-		msg.type = "unready";
-		msg.client = clientID;
+		msg.type = "client ready";
+		msg.clientName = clientName;
+
+		let message = JSON.stringify(msg);
+
+		await WebsocketHandler.broadcastToRoom(roomID, message);
+	}
+
+	static async clientNotReady(clientName, roomID) {
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "client unready";
+		msg.clientName = clientName;
 
 		let message = JSON.stringify(msg);
 

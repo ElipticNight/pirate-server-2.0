@@ -43,7 +43,8 @@ class Room
 	async addNewClient(client) {
 		client.roomID = this.id;
 		await this.DB.createNewClient(client);
-		return await this.DB.addClientToRoom(this.id);
+		await this.DB.addClientToRoom(this.id);
+		return await WebsocketHandler.newClientJoined(client.name, this.id);
 	}
 
 	async RemoveClient(client) {
