@@ -18,11 +18,12 @@ class WebsocketHandler
 		});
 	}
 
-	static async broadcastToClient(socketID = false, message, name = "") {
+	static async broadcastToClient(socketID = false, message, name = "", roomID = '') {
 		if(socketID !== false) {
 			WebsocketHandler.clients[socketID].send(message);
 		} else {
-			//get client's socketID from their name, not yet necessary but might be
+			let socket = await WebsocketHandler.DB.getClientSocket(roomID, name);
+			WebsocketHandler.clients[socket[0].socket_id].send(message);
 		}
 	}
 
@@ -79,6 +80,15 @@ class WebsocketHandler
 		let message = JSON.stringify(msg);
 
 		await WebsocketHandler.broadcastToRoom(roomID, message);
+	}
+
+	static async hostRequestResponse(client, success) {
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "host request";
+		msg.success = success;
+
+		let message = JSON.stringify(msg);
+		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 	}
 }
 

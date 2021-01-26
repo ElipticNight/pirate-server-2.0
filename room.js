@@ -40,6 +40,15 @@ class Room
 		return (roomID);
 	}
 
+	async requestHost(client) {
+		if((await this.DB.getRoomHost(this.id)).length > 0) {
+			await WebsocketHandler.hostRequestResponse(client, false);
+		} else {
+			await this.DB.setRoomHost(client)
+			await WebsocketHandler.hostRequestResponse(client, true);
+		}
+	}
+
 	async addNewClient(client) {
 		client.roomID = this.id;
 		await WebsocketHandler.setupNewClient(client, this.id);

@@ -56,10 +56,11 @@ class Database
 			client.name,
 			client.roomID,
 			'',
-			'setup'
+			'setup',
+			false
 		];
 		// console.log('5');
-		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status) VALUES (?, ?, ?, ?, ?)', params);
+		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status, host) VALUES (?, ?, ?, ?, ?, ?)', params);
 	}
 
 	async deleteClient(client) {
@@ -105,9 +106,30 @@ class Database
 
 	async getClientsInRoom(roomID) {
 		// console.log('12');
-		// console.log(roomID)
 		return await this.query('SELECT * FROM clients WHERE room_id = ?', roomID);
 	}
+
+	async getRoomHost(roomID) {
+		return await this.query('SELECT * FROM clients WHERE room_id = ? AND host = true', roomID);
+	}
+
+	async setRoomHost(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		// console.log('9');
+		return await this.query('UPDATE clients SET host = true WHERE room_id = ? AND name = ?', params);
+	}
+
+	async getClientSocket(roomID, name) {
+		let params = [
+			roomID,
+			name
+		]
+		// console.log('9');
+		return await this.query('SELECT * FROM clients WHERE room_id = ? AND name = ?', params);
+	} 
 }
 
 module.exports = Database;
