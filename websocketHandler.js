@@ -1,4 +1,5 @@
 const Database = require('./database');
+const Helper = require('./helper');
 
 class WebsocketHandler
 {
@@ -18,7 +19,6 @@ class WebsocketHandler
 	}
 
 	static async broadcastToClient(socketID = false, message, name = "") {
-
 		if(socketID !== false) {
 			WebsocketHandler.clients[socketID].send(message);
 		} else {
@@ -27,13 +27,16 @@ class WebsocketHandler
 	}
 
 	static async newClientJoined(client, roomID) {
-		let msg = WebsocketHandler.baseMessage;
+		let clients = await WebsocketHandler.DB.getClientsInRoom(roomID)
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "setup";
+		msg.totalClients = clients.length;
+		msg.clients = Helper.getClientsWithStatus(clients);
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 
 
-		msg = WebsocketHandler.baseMessage;
+		msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client joined";
 		msg.clientName = client.name;
 		message = JSON.stringify(msg);
