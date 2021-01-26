@@ -57,7 +57,7 @@ class Room
 		let readyClientsNo = await this.DB.readyClientsNo(this.id)
 		await WebsocketHandler.clientReady(client.name, this.id);
 		if(readyClientsNo[0].countID === this.connectedClientsNo) {
-			await WebsocketHandler.clientReady(this.id);
+			await WebsocketHandler.allClientsReady(this.id);
 		} else {
 			return
 		}

@@ -14,12 +14,12 @@ class Database
 		});
 		this.con.connect(function(err) {
 			if (err) throw err;
-			console.log("Connected to database");
 		});
 		this.query = util.promisify(this.con.query).bind(this.con);
 	}
 
 	async clearTables() {
+		// console.log('1');
 		await this.query('TRUNCATE TABLE clients');
 		return await this.query('DELETE FROM rooms');
 	}
@@ -34,16 +34,19 @@ class Database
 			roomSettings.three,
 			roomSettings.four
 		]
+		// console.log('2');
 		this.con.query(sql, params, function (err, result) {
 			if (err) throw err;
 		});
 	}
 
 	async roomExists(roomID) {
+		// console.log('3');
 		return (await this.getRoomSettings(roomID)).length !== 0;
 	}
 
 	async getRoomSettings(roomID) {
+		// console.log('4');
 		return await this.query('SELECT * FROM rooms WHERE id = ?', roomID);
 	}
 
@@ -55,6 +58,7 @@ class Database
 			'',
 			'setup'
 		];
+		// console.log('5');
 		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status) VALUES (?, ?, ?, ?, ?)', params);
 	}
 
@@ -62,14 +66,17 @@ class Database
 		let params = [
 			client.socket_id,
 		];
+		// console.log('6');
 		return await this.query('DELETE FROM clients WHERE socket_id = ?', params);
 	}
 
 	async addClientToRoom(roomID) {
+		// console.log('7');
 		return await this.query('UPDATE rooms SET client_no = client_no+1 WHERE id = ?', roomID);
 	}
 
 	async removeClientFromRoom(roomID) {
+		// console.log('8');
 		return await this.query('UPDATE rooms SET client_no = client_no-1 WHERE id = ?', roomID);
 	}
 
@@ -78,6 +85,7 @@ class Database
 			client.roomID,
 			client.name
 		]
+		// console.log('9');
 		return await this.query('UPDATE clients SET status = "ready" WHERE room_id = ? AND name = ?', params);
 	}
 
@@ -86,14 +94,18 @@ class Database
 			client.roomID,
 			client.name
 		]
+		// console.log('10');
 		return await this.query('UPDATE clients SET status = "setup" WHERE room_id = ? AND name = ?', params);
 	}
 
 	async readyClientsNo(roomID) {
+		// console.log('11');
 		return await this.query('SELECT count(id) as countID FROM clients WHERE room_id = ? AND status = "ready"', roomID);
 	}
 
 	async getClientsInRoom(roomID) {
+		// console.log('12');
+		// console.log(roomID)
 		return await this.query('SELECT * FROM clients WHERE room_id = ?', roomID);
 	}
 }
