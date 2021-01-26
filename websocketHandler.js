@@ -5,6 +5,9 @@ class WebsocketHandler
 	static id = 0;
 	static clients = {};
 	static DB = new Database();
+	static baseMessage = {
+		type: '',
+	};
 
 	static async broadcastToRoom(roomID, message) {
 		let socketIDs = await WebsocketHandler.DB.getClientsInRoom(roomID)
@@ -15,27 +18,30 @@ class WebsocketHandler
 	}
 
 	static async clientReady(clientID, roomID) {
-		let message = JSON.stringify({
-			target: 'ready',
-			client: clientID
-		});
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "ready";
+		msg.client = clientID;
+
+		let message = JSON.stringify(msg);
 
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
 	static async clientNotReady(clientID, roomID) {
-		let message = JSON.stringify({
-			target: 'unready',
-			client: clientID
-		});
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "unready";
+		msg.client = clientID;
+
+		let message = JSON.stringify(msg);
 
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
 	static async allClientsReady(roomID) {
-		let message = JSON.stringify({
-			target: 'all Clients Ready'
-		});
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "all clients ready";
+
+		let message = JSON.stringify(msg);
 
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
