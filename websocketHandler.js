@@ -17,13 +17,26 @@ class WebsocketHandler
 		});
 	}
 
-	static async newClientJoined(clientName, roomID) {
+	static async broadcastToClient(socketID = false, message, name = "") {
+
+		if(socketID !== false) {
+			WebsocketHandler.clients[socketID].send(message);
+		} else {
+			//get client's socketID from their name, not yet necessary but might be
+		}
+	}
+
+	static async newClientJoined(client, roomID) {
 		let msg = WebsocketHandler.baseMessage;
-		msg.type = "client joined";
-		msg.clientName = clientName;
-
+		msg.type = "setup";
 		let message = JSON.stringify(msg);
+		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 
+
+		msg = WebsocketHandler.baseMessage;
+		msg.type = "client joined";
+		msg.clientName = client.name;
+		message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
