@@ -50,7 +50,8 @@ class Room
 
 	async RemoveClient(client) {
 		await this.DB.deleteClient(client);
-		return await this.DB.removeClientFromRoom(this.id);
+		await this.DB.removeClientFromRoom(this.id);
+		await WebsocketHandler.clientLeft(client, this.id);
 	}
 
 	async clientReady(client) {
