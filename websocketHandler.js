@@ -26,7 +26,7 @@ class WebsocketHandler
 		}
 	}
 
-	static async newClientJoined(client, roomID) {
+	static async setupNewClient(client, roomID) {
 		let clients = await WebsocketHandler.DB.getClientsInRoom(roomID)
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "setup";
@@ -34,12 +34,13 @@ class WebsocketHandler
 		msg.clients = Helper.getClientsWithStatus(clients);
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToClient(client.socket_id, message);
+	}
 
-
-		msg = Object.create(WebsocketHandler.baseMessage);
+	static async newClientJoined(client, roomID) {
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client joined";
 		msg.clientName = client.name;
-		message = JSON.stringify(msg);
+		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
