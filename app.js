@@ -42,6 +42,9 @@ wss.on('connection', function connection(ws) {
 			} else if (message.type === 'unready') {
 				let room = await createRoom(message.roomid)
 				room.clientNotReady(client);
+			} else if (message.type === 'start') {
+				let room = await createRoom(message.roomid)
+				room.startGame(client);
 			}
 		})();
 	});

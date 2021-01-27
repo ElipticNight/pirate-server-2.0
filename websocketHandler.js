@@ -90,6 +90,14 @@ class WebsocketHandler
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 	}
+
+	static async startGame(roomID) {
+		let msg = WebsocketHandler.baseMessage;
+		msg.type = "start game";
+
+		let message = JSON.stringify(msg);
+		await WebsocketHandler.broadcastToRoom(roomID, message);
+	}
 }
 
 module.exports = WebsocketHandler;

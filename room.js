@@ -81,8 +81,10 @@ class Room
 		await WebsocketHandler.clientNotReady(client.name, this.id);
 	}
 
-	async startGame() {
-		//check if host sent request
+	async startGame(client) {
+		if(client.name === (await this.DB.getRoomHost(this.id))[0].name) {
+			await WebsocketHandler.startGame(this.id);
+		}
 	}
 }
 
