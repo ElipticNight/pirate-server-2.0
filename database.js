@@ -14,9 +14,14 @@ class Database
 		});
 		this.con.connect(function(err) {
 			if (err) throw err;
-			console.log("Connected to database");
 		});
 		this.query = util.promisify(this.con.query).bind(this.con);
+	}
+
+	async clearTables() {
+		// console.log('1');
+		await this.query('TRUNCATE TABLE clients');
+		return await this.query('DELETE FROM rooms');
 	}
 
 	createRoom(roomSettings) {
@@ -29,26 +34,102 @@ class Database
 			roomSettings.three,
 			roomSettings.four
 		]
+		// console.log('2');
 		this.con.query(sql, params, function (err, result) {
 			if (err) throw err;
 		});
 	}
 
 	async roomExists(roomID) {
+		// console.log('3');
 		return (await this.getRoomSettings(roomID)).length !== 0;
 	}
 
 	async getRoomSettings(roomID) {
+		// console.log('4');
 		return await this.query('SELECT * FROM rooms WHERE id = ?', roomID);
 	}
 
+	async createNewClient(client) {
+		let params = [
+			client.socket_id,
+			client.name,
+			client.roomID,
+			'',
+			'setup',
+			false
+		];
+		// console.log('5');
+		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status, host) VALUES (?, ?, ?, ?, ?, ?)', params);
+	}
+
+	async deleteClient(client) {
+		let params = [
+			client.socket_id,
+		];
+		// console.log('6');
+		return await this.query('DELETE FROM clients WHERE socket_id = ?', params);
+	}
+
 	async addClientToRoom(roomID) {
-		return await this.query('UPDATE rooms SET client_no=client_no+1 WHERE id = ?', roomID);
+		// console.log('7');
+		return await this.query('UPDATE rooms SET client_no = client_no+1 WHERE id = ?', roomID);
 	}
 
 	async removeClientFromRoom(roomID) {
-		return await this.query('UPDATE rooms SET client_no=client_no-1 WHERE id = ?', roomID);
+		// console.log('8');
+		return await this.query('UPDATE rooms SET client_no = client_no-1 WHERE id = ?', roomID);
 	}
+
+	async clientReady(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		// console.log('9');
+		return await this.query('UPDATE clients SET status = "ready" WHERE room_id = ? AND name = ?', params);
+	}
+
+	async clientNotReady(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		// console.log('10');
+		return await this.query('UPDATE clients SET status = "setup" WHERE room_id = ? AND name = ?', params);
+	}
+
+	async readyClientsNo(roomID) {
+		// console.log('11');
+		return await this.query('SELECT count(id) as countID FROM clients WHERE room_id = ? AND status = "ready"', roomID);
+	}
+
+	async getClientsInRoom(roomID) {
+		// console.log('12');
+		return await this.query('SELECT * FROM clients WHERE room_id = ?', roomID);
+	}
+
+	async getRoomHost(roomID) {
+		return await this.query('SELECT * FROM clients WHERE room_id = ? AND host = true', roomID);
+	}
+
+	async setRoomHost(client) {
+		let params = [
+			client.roomID,
+			client.name
+		]
+		// console.log('9');
+		return await this.query('UPDATE clients SET host = true WHERE room_id = ? AND name = ?', params);
+	}
+
+	async getClientSocket(roomID, name) {
+		let params = [
+			roomID,
+			name
+		]
+		// console.log('9');
+		return await this.query('SELECT * FROM clients WHERE room_id = ? AND name = ?', params);
+	} 
 }
 
 module.exports = Database;
