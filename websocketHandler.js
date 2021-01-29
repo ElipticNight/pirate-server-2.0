@@ -45,6 +45,13 @@ class WebsocketHandler
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
 
+	static async clientNameAlreadyTaken(client) {
+		let msg = Object.create(WebsocketHandler.baseMessage);
+		msg.type = "username taken";
+		let message = JSON.stringify(msg);
+		await WebsocketHandler.broadcastToClient(client.socket_id, message);
+	}
+
 	static async clientLeft(client, roomID) {
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client left";
