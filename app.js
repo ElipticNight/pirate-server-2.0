@@ -38,8 +38,6 @@ wss.on('connection', function connection(ws) {
 				} else if(response === "room full") {
 					await WebsocketHandler.clientNameAlreadyTaken(client);
 				}
-			} else if (message.type === 'request host') {
-				let room = await createRoom(message.roomid)
 				await room.requestHost(client);
 			} else if (message.type === 'ready') {
 				let room = await createRoom(message.roomid)
