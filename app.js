@@ -32,6 +32,7 @@ wss.on('connection', function connection(ws) {
 		(async() => {
 			if (message.type === 'joinroom') {
 				let room = await createRoom(message.roomid)
+				client.avatar = message.avatar;
 				let response = await room.addNewClient(client);
 				if(response === "name already taken") {
 					await WebsocketHandler.clientNameAlreadyTaken(client);

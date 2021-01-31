@@ -32,7 +32,7 @@ class WebsocketHandler
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "setup";
 		msg.totalClients = clients.length;
-		msg.clients = Helper.getClientsWithStatus(clients);
+		msg.clients = Helper.getClientsWithStatusAndAvatar(clients);
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 	}
@@ -41,6 +41,7 @@ class WebsocketHandler
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client joined";
 		msg.clientName = client.name;
+		msg.clientAvatar = client.avatar;
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToRoom(roomID, message);
 	}
