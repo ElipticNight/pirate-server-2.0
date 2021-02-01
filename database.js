@@ -130,7 +130,17 @@ class Database
 		]
 		// console.log('9');
 		return await this.query('SELECT * FROM clients WHERE room_id = ? AND name = ?', params);
-	} 
+	}
+
+	async recordClientResponse(client) {
+		let params = [
+			client.response,
+			client.roomid,
+			client.name
+		]
+		console.log(params)
+		return await this.query('UPDATE clients SET response = ? WHERE room_id = ? AND name = ?', params);
+	}
 }
 
 module.exports = Database;

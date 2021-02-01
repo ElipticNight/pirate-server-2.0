@@ -11,6 +11,8 @@ app.use(Routes);
 
 const Room = require('./room');
 
+const ResponseHandler = require('./responseHandler');
+
 const Database = require('./database');
 new Database().clearTables();
 
@@ -49,6 +51,10 @@ wss.on('connection', function connection(ws) {
 			} else if (message.type === 'start') {
 				let room = await createRoom(message.roomid)
 				room.startGame(client);
+			} else if (message.type === 'response') {
+				let RH = new ResponseHandler();
+				await RH.construct(message.roomid);
+				await RH.recordResponse(message);
 			}
 		})();
 	});
