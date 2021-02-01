@@ -57,10 +57,11 @@ class Database
 			client.roomID,
 			'',
 			'setup',
-			false
+			false,
+			client.avatar
 		];
 		// console.log('5');
-		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status, host) VALUES (?, ?, ?, ?, ?, ?)', params);
+		return await this.query('INSERT INTO clients (socket_id, name, room_id, board, status, host, avatar) VALUES (?, ?, ?, ?, ?, ?, ?)', params);
 	}
 
 	async deleteClient(client) {

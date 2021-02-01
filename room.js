@@ -50,21 +50,29 @@ class Room
 	}
 
 	async addNewClient(client) {
+		let currentPlayers = await this.DB.getClientsInRoom(this.id);
+		if(currentPlayers.some(players=>players.name === client.name)) {
+			return "name already taken";
+		} if(currentPlayers.length === 52) {
+			return "room full";
+		}
+
 		client.roomID = this.id;
 		await WebsocketHandler.setupNewClient(client, this.id);
 		await this.DB.createNewClient(client);
 		await this.DB.addClientToRoom(this.id);
 		await WebsocketHandler.newClientJoined(client, this.id);
+		return "client added";
 	}
 
 	async RemoveClient(client) {
-		console.log(this.connectedClientsNo);
 		await this.DB.deleteClient(client);
 		await this.DB.removeClientFromRoom(this.id);
 		await WebsocketHandler.clientLeft(client, this.id);
-		console.log(this.connectedClientsNo);
 		let readyClientsNo = await this.DB.readyClientsNo(this.id)
-		if(readyClientsNo[0].countID === this.connectedClientsNo - 1) {
+		if(this.connectedClientsNo - 1 === 0) {
+			//close room
+		} else if(readyClientsNo[0].countID === this.connectedClientsNo - 1) {
 			await WebsocketHandler.allClientsReady(this.id);
 		} else {
 			return

@@ -32,9 +32,13 @@ wss.on('connection', function connection(ws) {
 		(async() => {
 			if (message.type === 'joinroom') {
 				let room = await createRoom(message.roomid)
-				await room.addNewClient(client);
-			} else if (message.type === 'request host') {
-				let room = await createRoom(message.roomid)
+				client.avatar = message.avatar;
+				let response = await room.addNewClient(client);
+				if(response === "name already taken") {
+					await WebsocketHandler.clientNameAlreadyTaken(client);
+				} else if(response === "room full") {
+					await WebsocketHandler.clientNameAlreadyTaken(client);
+				}
 				await room.requestHost(client);
 			} else if (message.type === 'ready') {
 				let room = await createRoom(message.roomid)

@@ -32,7 +32,7 @@ class WebsocketHandler
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "setup";
 		msg.totalClients = clients.length;
-		msg.clients = Helper.getClientsWithStatus(clients);
+		msg.clients = Helper.getClientsWithStatusAndAvatar(clients);
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 	}
@@ -41,8 +41,16 @@ class WebsocketHandler
 		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client joined";
 		msg.clientName = client.name;
+		msg.clientAvatar = client.avatar;
 		let message = JSON.stringify(msg);
 		await WebsocketHandler.broadcastToRoom(roomID, message);
+	}
+
+	static async clientNameAlreadyTaken(client) {
+		let msg = Object.create(WebsocketHandler.baseMessage);
+		msg.type = "username taken";
+		let message = JSON.stringify(msg);
+		await WebsocketHandler.broadcastToClient(client.socket_id, message);
 	}
 
 	static async clientLeft(client, roomID) {
@@ -54,7 +62,7 @@ class WebsocketHandler
 	}
 
 	static async clientReady(clientName, roomID) {
-		let msg = WebsocketHandler.baseMessage;
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client ready";
 		msg.clientName = clientName;
 
@@ -64,7 +72,7 @@ class WebsocketHandler
 	}
 
 	static async clientNotReady(clientName, roomID) {
-		let msg = WebsocketHandler.baseMessage;
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "client unready";
 		msg.clientName = clientName;
 
@@ -74,7 +82,7 @@ class WebsocketHandler
 	}
 
 	static async allClientsReady(roomID) {
-		let msg = WebsocketHandler.baseMessage;
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "all clients ready";
 
 		let message = JSON.stringify(msg);
@@ -83,7 +91,7 @@ class WebsocketHandler
 	}
 
 	static async hostRequestResponse(client, success) {
-		let msg = WebsocketHandler.baseMessage;
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "host request";
 		msg.success = success;
 
@@ -92,7 +100,7 @@ class WebsocketHandler
 	}
 
 	static async startGame(roomID) {
-		let msg = WebsocketHandler.baseMessage;
+		let msg = Object.create(WebsocketHandler.baseMessage);
 		msg.type = "start game";
 
 		let message = JSON.stringify(msg);
